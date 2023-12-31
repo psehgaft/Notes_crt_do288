@@ -1,10 +1,16 @@
 # Git management
 
 ```sh
-cd 
+cd
+
+git checkout -b source-build
+git push -u origin source-build
 ```
 
 # New APP 
+
+
+oc new-app --name greet --build-env npm_config_registry=http://.../repository/nodejs nodejs:16-ubi8~https://github.com/.../DO288-apps#source-build --context-dir nodejs-helloworld
 
 ssh file:
 
