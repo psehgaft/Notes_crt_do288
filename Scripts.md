@@ -53,6 +53,8 @@ oc import-image myis --confirm --from registry.acme.example.com:5000/acme/awesom
 ```sh
 FROM registry.access.redhat.com/ubi8/ubi:8.0 
 USER 1001
+RUN   chown -R wildfly:wildfly /opt/app-root && chmod -R 700 /opt/app-root
+RUN   chgrp -R 0 /opt/app-root && chmod -R g=u /opt/app-root
 EXPOSE 3000
 RUN mkdir -p /opt/app-root/
 WORKDIR /opt/app-root
