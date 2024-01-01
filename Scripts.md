@@ -9,8 +9,11 @@ git push -u origin source-build
 
 # New APP 
 
+Create a new application from sources in the Git repository. Name the application greet. Use the --build-env option with the oc new-app command to define the build environment variable with the npm modules URL.
 
-oc new-app --name greet --build-env npm_config_registry=http://.../repository/nodejs nodejs:16-ubi8~https://github.com/.../DO288-apps#source-build --context-dir nodejs-helloworld
+```sh
+oc new-app --name greet --build-env npm_config_registry=http://psehgaft/repository/nodejs nodejs:16-ubi8~https://github.com/psehgaft/DO288-apps#source-build --context-dir nodejs-helloworld
+```
 
 ssh file:
 
@@ -25,3 +28,14 @@ oc new-app --template ${RHT_OCP4_DEV_USER}-common/php-mysql-ephemeral \
   -p DATABASE_PASSWORD=mypa55 \
   --name quotes
 ```
+
+
+# 
+
+--as-deployment-config	 Configura el comando oc new-app para crear un recurso DeploymentConfig en lugar de Deployment.
+--image-stream / -i      Proporciona el flujo de imágenes que se usará como la imagen de compilador S2I para una compilación S2I o para implementar una imagen de contenedor.
+--strategy	             docker o pipeline o source
+--code	                 Proporciona la URL a un repositorio de git que se usará como entrada para una compilación S2I.
+--docker-image	         Proporciona la URL a una imagen de contenedor que se implementará.
+--dry-run	               Se establece en true para mostrar el resultado de la operación sin realizarla.
+--context-dir	           Proporciona la ruta a un directorio para tratar como directorio raíz.
