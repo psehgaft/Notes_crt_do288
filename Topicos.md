@@ -11,7 +11,7 @@ Temas Tops:
 
 # 
 
-1. Desplegar una app desde git.
+1. Desplegar app from git.
 
 
 - Work with Red Hat OpenShift Container Platform
