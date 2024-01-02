@@ -9,5 +9,17 @@ Temas Tops:
 7. Personalizar una imagen de construccion usando .s2i en codigo fuente.
 8. Construir una imagen de construccion con S2I
 
+# 
 
 1. Desplegar una app desde git.
+
+
+Work with Red Hat OpenShift Container Platform
+Deploy multi-container applications
+Work with container images
+Troubleshoot application deployment issues
+Work with image streams
+Work with configuration maps
+Work with the source-to-image (S2I) tool
+Work with hooks and triggers
+Work with templates
