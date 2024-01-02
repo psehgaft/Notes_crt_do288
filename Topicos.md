@@ -14,12 +14,12 @@ Temas Tops:
 1. Desplegar una app desde git.
 
 
-Work with Red Hat OpenShift Container Platform
-Deploy multi-container applications
-Work with container images
-Troubleshoot application deployment issues
-Work with image streams
-Work with configuration maps
-Work with the source-to-image (S2I) tool
-Work with hooks and triggers
-Work with templates
+. Work with Red Hat OpenShift Container Platform
+. Deploy multi-container applications
+. Work with container images
+. Troubleshoot application deployment issues
+. Work with image streams
+. Work with configuration maps
+. Work with the source-to-image (S2I) tool
+. Work with hooks and triggers
+. Work with templates
