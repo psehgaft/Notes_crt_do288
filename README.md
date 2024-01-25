@@ -72,8 +72,11 @@ ONBUILD COPY src/ ${DOCROOT}/
 EXPOSE 80
 # This stuff is needed to ensure a clean start
 RUN rm -rf /run/httpd && mkdir /run/httpd
+
+RUN   chgrp -R 0 ${DOCROOT}/ && \
+      chmod -R g=u ${DOCROOT}/
 # Run as the root user
-USER root 
+USER 1001 
 # Launch httpd
 CMD /usr/sbin/httpd -DFOREGROUND
 ```
@@ -82,6 +85,9 @@ Service Account
 
 ```sh
 podman build --layers=false -t [image-name] ./
+podman tag [image-name] [registry]/[image-name]
+podman push --format v2s1 [registry]/[image-name]
+
 oc create serviceaccount myserviceaccount
 oc patch dc/demo-app --patch '{"spec":{"template":{"spec":{"serviceAccountName": "myserviceaccount"}}}}'
 oc adm policy add-scc-to-user anyuid -z myserviceaccount
@@ -146,4 +152,12 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
 
 helm dependency update
+```
+
+## No9. 
+```sh
+oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+HOST=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+podman login -u kubeadmin -p $(oc whoami -t) --tls-verify=false $HOST
+oc policy add-role-to-user system:image-puller user_name -n project_name
 ```
