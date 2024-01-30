@@ -52,7 +52,7 @@ oc new-app --name [name] httpd:2.4~[git-url]#[git-branch] --context-dir[git-cont
 
 ```sh
 oc describe bc/[build-config-name]
-oc set build-hook bc/[build-config-name] --post-commit --command -- exec python smthg.py 
+oc set build-hook bc/[build-config-name] --post-commit --command -- python /opt/app-root/src/abc.py 
 oc start-build bc/[build-config-name]
 ```
 
