@@ -24,45 +24,14 @@ oc logs -f bc/[build-config-name]
 # Fix package.json (:)
 oc start-buld -follow bc/[build-config-name]
 ```
-
 ## No2. 
-
-```sh
-podman run --name test -it rhscl/httpd-24-rhel7 bash
-
-vi [dir].s2i/bin/assemble
-
- CUSTOMIZATION STARTS HERE 
-
-echo "---> Installing application source"
-cp -Rf /tmp/src/*.html ./
-
-DATE=date "+%b %d, %Y @ %H:%M %p"
-
-echo "---> Creating info page"
-echo "Page built on $DATE" >> ./info.html
-echo "Proudly served by Apache HTTP Server version $HTTPD_VERSION" >> ./info.html
-
- CUSTOMIZATION ENDS HERE 
-
-oc new-app --name [name] httpd:2.4~[git-url]#[git-branch] --context-dir[git-context-dir]
-```
-
-## No3. 
-
-```sh
-oc describe bc/[build-config-name]
-oc set build-hook bc/[build-config-name] --post-commit --command -- python /opt/app-root/src/abc.py 
-oc start-build bc/[build-config-name]
-```
-
-
-## No4. 
 
 ```docker
 FROM registry.access.redhat.com/ubi8/ubi:8.0 
 MAINTAINER Red Hat Training <training@redhat.com>
 # DocumentRoot for Apache
+ENV DOCROOT=/var/www/html
+
 LABEL io.k8s.description="A basic Apache HTTP Server child image, uses ONBUILD" \
       io.k8s.display-name="Apache HTTP Server" \
       io.openshift.expose-services="8080:http" \
@@ -71,8 +40,6 @@ LABEL io.k8s.description="A basic Apache HTTP Server child image, uses ONBUILD" 
 RUN sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf \
 RUN sed -i "s/#ServerName www.example.com:80/ServerName 0.0.0.0:8080/g" \
     /etc/httpd/conf/httpd.conf
-
-ENV DOCROOT=/var/www/html
 
 RUN   yum install -y --no-docs --disableplugin=subscription-manager httpd && \ 
       yum clean all --disableplugin=subscription-manager -y && \
@@ -110,8 +77,38 @@ oc patch dc/demo-app --patch '{"spec":{"template":{"spec":{"serviceAccountName":
 oc adm policy add-scc-to-user anyuid -z myserviceaccount
 ```
 
+## No3. 
 
-## No6. 
+```sh
+podman run --name test -it rhscl/httpd-24-rhel7 bash
+
+vi [dir].s2i/bin/assemble
+
+CUSTOMIZATION STARTS HERE 
+
+echo "---> Installing application source"
+cp -Rf /tmp/src/*.html ./
+
+DATE=date "+%b %d, %Y @ %H:%M %p"
+
+echo "---> Creating info page"
+echo "Page built on $DATE" >> ./info.html
+echo "Proudly served by Apache HTTP Server version $HTTPD_VERSION" >> ./info.html
+
+ CUSTOMIZATION ENDS HERE 
+
+oc new-app --name [name] httpd:2.4~[git-url]#[git-branch] --context-dir[git-context-dir]
+```
+
+## No4. 
+
+```sh
+oc describe bc/[build-config-name]
+oc set build-hook bc/[build-config-name] --post-commit --command -- python /opt/app-root/src/abc.py 
+oc start-build bc/[build-config-name]
+```
+
+## No5. 
 
 ```sh
 oc patch configmap/myconf --patch '{"data":{"key1":""}}'
@@ -124,7 +121,7 @@ oc set env deployment/mydcname --from secret/mysecret
 oc set volume deployment/mydcname --add -t secret -m /path/to/mount/volume --name myvol --secret-name mysecret
 ```
 
-## No7. 
+## No6. 
 
 ```sh
 
@@ -133,14 +130,15 @@ oc set probe deployment probes --readiness --get-url=http://:8080/ready --initia
 
 ```
 
-## No8. 
+## No7. 
 
 ```sh
-
 helm create app1
+```
 
 vi values.yaml
 
+```sh
 mariadb:
   auth:
     username: quotes
@@ -151,24 +149,32 @@ mariadb:
       enabled: false
     containerSecurityContext:
       enabled: false
+```
 
 vi templates/deployment.yml
 
+```sh
 imagePullPolicy: {{ .Values.image.pullPolicy }}
 env:
   {{- range .Values.env }}
 - name: {{ .name }}
   value: {{ .value }}
   {{- end }}
+```
 
 vi chart.yaml
 
+```sh
 dependencies:
 - name: mariadb
   version: 11.0.13
   repository: https://charts.bitnami.com/bitnami
+```
 
+```sh
 helm dependency update
+helm install app1 .
+```
 ```
 
 ## No9. 
