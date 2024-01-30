@@ -63,20 +63,37 @@ oc start-build bc/[build-config-name]
 FROM registry.access.redhat.com/ubi8/ubi:8.0 
 MAINTAINER Red Hat Training <training@redhat.com>
 # DocumentRoot for Apache
-ENV DOCROOT=/var/www/html 
+LABEL io.k8s.description="A basic Apache HTTP Server child image, uses ONBUILD" \
+      io.k8s.display-name="Apache HTTP Server" \
+      io.openshift.expose-services="8080:http" \
+      io.openshift.tags="apache, httpd"
+
+RUN sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf \
+RUN sed -i "s/#ServerName www.example.com:80/ServerName 0.0.0.0:8080/g" \
+    /etc/httpd/conf/httpd.conf
+
+ENV DOCROOT=/var/www/html
+
 RUN   yum install -y --no-docs --disableplugin=subscription-manager httpd && \ 
       yum clean all --disableplugin=subscription-manager -y && \
-      echo "Hello from the httpd-parent container!" > ${DOCROOT}/index.html
+      echo "Hello from the httpd-parent container!" > ${DOCROOT}/index.html && \
+      rm -rf /run/httpd && \
+      mkdir /run/httpd
+
 # Allows child images to inject their own content into DocumentRoot
 ONBUILD COPY src/ ${DOCROOT}/ 
-EXPOSE 80
+
+EXPOSE 8080
+
 # This stuff is needed to ensure a clean start
 RUN rm -rf /run/httpd && mkdir /run/httpd
 
-RUN   chgrp -R 0 ${DOCROOT}/ && \
-      chmod -R g=u ${DOCROOT}/
+RUN   chgrp -R 0 ${DOCROOT} /var/log/httpd /var/run/httpd && \
+      chmod -R g=u ${DOCROOT}/ /var/log/httpd /var/run/http
+
 # Run as the root user
-USER 1001 
+USER 1001
+
 # Launch httpd
 CMD /usr/sbin/httpd -DFOREGROUND
 ```
